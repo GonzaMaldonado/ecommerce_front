@@ -8,3 +8,8 @@ export const loginRequest = async (username:string, password:string) => {
   const response = await axi.post("/users/login/", {username, password})
   return response;
 }
+
+export const getUsersRequest = async () => {
+  const response = await axi.get("/users/")
+  return response.data
+}
