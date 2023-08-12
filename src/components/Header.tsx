@@ -18,10 +18,10 @@ const Header = () => {
   const { isAuth } = useAuthStore()
   const cart = useCartStore(state => state.cart);
 
+  let isAdmin: boolean;
   if(isAuth) {
     const tokenDecoded : Token = jwt_decode(token)
-    // eslint-disable-next-line no-var
-    var is_admin = (tokenDecoded.is_staff);  
+    isAdmin = tokenDecoded.is_staff 
   } 
 
   function logOutFun() {
@@ -101,7 +101,7 @@ const Header = () => {
                         </>
                       )}
 
-                    {is_admin && is_admin && (
+                    {isAdmin && (
                       <Link
                         to={'/admin'}
                         className='text-black p-2 px-4 rounded-lg hover:bg-slate-400 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'
@@ -118,7 +118,7 @@ const Header = () => {
 
               <div className="relative hidden md:block">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <svg className="w-5 h-5 text-gray-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
+                  <svg className="w-5 h-5 text-gray-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd"></path></svg>
                   <span className="sr-only">Search icon</span>
                 </div>
                 <input type="text" id="search-navbar" className="block w-full md:w-[200px] lg:w-[400px] xl:w-[600px] p-2
@@ -205,7 +205,7 @@ const Header = () => {
 
             <div className="flex mx-2">
               <div className="absolute inset-y-[72px] left-2 px-4 flex pl-3 pointer-events-none">
-                <svg className="w-5 h-5 text-gray-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
+                <svg className="w-5 h-5 text-gray-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd"></path></svg>
                 <span className="sr-only">Search icon</span>
               </div>
               <input type="text" id="search-navbar" className="block w-full p-2
@@ -254,7 +254,7 @@ Sign up
 </div>
                 )}
 
-              {is_admin  && (
+              {isAdmin  && (
                 <div className="w-full">
                   <Link
                     to={'/'}

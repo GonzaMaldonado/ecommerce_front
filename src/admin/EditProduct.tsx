@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, ChangeEvent, useEffect } from 'react';
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { put_product, get_products } from '../api/products';
+import { edit_product, get_product } from '../api/products';
 import Loader from '../components/Loader';
 import { toast } from 'react-hot-toast';
 
 interface Props {
-  param: string
+  param: number
   close: () => void
 }
 
 // https://react-dropzone.org/#!/Examples
 
-const EditProduct = ({ close, param }: Props) => {
+const EditProduct = ({ param, close }: Props) => {
 
     const [name, setName] = useState<string>('');
     const [countInStock, setCountInStock] = useState<number>(0);
@@ -25,12 +25,14 @@ const EditProduct = ({ close, param }: Props) => {
     const [isHovered, setIsHovered] = useState(false);
 
     const queryClient = useQueryClient();
-    console.log(image)
 
     const { data } = useQuery({
-queryFn: () => get_products(param),
+queryFn: () => get_product(param),
 queryKey: ['product']
 });
+
+let img  = data?.image
+
 
 useEffect(() => {
         if (data) {
@@ -38,25 +40,28 @@ useEffect(() => {
         setCountInStock(data.count_in_stock);
         setCategory(data.category);
         setDescription(data.description);
-        setImage(data.image);
+        setPrice(Number(data.price));
+        //setImage(data.image);
         }
         }, [data]);
 
 
+console.log(data, img);
 const editProdMutation = useMutation({
-mutationFn: put_product,
-onSuccess: () => {
-queryClient.invalidateQueries({ queryKey: ["products"] });
-},
-onError: (error: any) => {
-console.error(error);
-},
+    mutationFn: edit_product,
+    onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["products"] });
+        toast.success("Product updated!");
+    },
+    onError: () => {
+        toast.error("Failed to update!");
+    },
 });
 
 const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     editProdMutation.mutate({ 
-id: data.id,
+id: param,
 name: name, 
 count_in_stock: countInStock, 
 category: category, 
@@ -91,6 +96,7 @@ const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 
 const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
+    
     if (file) {
         setImage(file);
         const reader = new FileReader();
@@ -112,9 +118,11 @@ const handleDragLeave = (event: React.DragEvent<HTMLLabelElement>) => {
 };
 
 const removeImage = () => {
+    img = null
     setImage(null)
     setIsHovered(false)
 }
+
 
 
 if(editProdMutation.isLoading) return (<Loader/>)
@@ -181,7 +189,7 @@ return (
 
     <div className="sm:col-span-2">
     <div className="flex items-center justify-center w-full">
-{image === null ? (
+{img === null ? (
 
         <label
         htmlFor="dropzone-file"
@@ -231,12 +239,12 @@ className="absolute w-full h-[300px] opacity-0"
         <button 
         onClick={removeImage}
         type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="defaultModal">
-        <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+        <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path></svg>
         <span className="sr-only">Close modal</span>
         </button>
         <img
         className='h-48 w-96'
-        src={filePreview || `http://127.0.0.1:8000/${data.image}`}
+        src={ filePreview || `http://127.0.0.1:8000/${img}` }
         alt="Imagen seleccionada"
         />
         </div>
@@ -248,7 +256,7 @@ className="absolute w-full h-[300px] opacity-0"
 
     </div>
     <button type="submit" className="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
-    <svg className="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+    <svg className="mr-1 -ml-1 w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"></path></svg>
     Edit product
     </button>
     </form>

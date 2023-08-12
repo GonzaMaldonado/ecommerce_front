@@ -28,27 +28,25 @@ const Home = () => {
         if (inView) {
             fetchNextPage();
         }
-    }, [inView]);
+    }, [inView, fetchNextPage]);
 
     if (isLoading) return <Loader />;
     if (error instanceof Error) return <>{toast.error(error.message)}</>;
 
     return (
         <>
-            {data?.pages.map((page: any) => (
+            {data?.pages[0].data.map((product: Product) => (
                 <>
                     <div className="flex justify-center">
-                        <div
-                            key={page.meta.next}
-                            className="p-8 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-16"
-                        >
-                            {page.data.map((product: Product) => (
+                        <div key={product.id} className="p-8 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-16">
+
+                            
                                 <ProductCard
                                     key={product.id}
                                     product={product}
                                     //page={"home"}
                                 />
-                            ))}
+                           
                         </div>
                     </div>
 
@@ -57,7 +55,8 @@ const Home = () => {
                             No more results
                         </p>
                     )}
-                    {!isLoading &&
+                    {/* Esto tiene algun error que hace un infinityScroll repitiendo productos ya cargados
+                    !isLoading &&
                         data?.pages?.length !== undefined &&
                         data.pages.length > 0 &&
                         hasNextPage && (
@@ -66,7 +65,7 @@ const Home = () => {
                                     <Loader />
                                 ) : null}
                             </div>
-                        )}
+                                )*/}
                 </>
             ))}
         </>

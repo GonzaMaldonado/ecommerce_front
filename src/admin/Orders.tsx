@@ -21,6 +21,7 @@ const Orders = () => {
   if(isLoading) return <Loader />
   
   if(error instanceof Error) return <>{toast.error(error.message)}</>
+  
 
   return (
     <div className="overflow-x-auto">
@@ -28,9 +29,9 @@ const Orders = () => {
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
             <th scope="col" className="px-4 py-3">Order ID</th>
-            <th scope="col" className="px-4 py-3">Email</th>
             <th scope="col" className="px-4 py-3">Username</th>
-            <th scope="col" className="px-4 py-3">Actions</th>
+            <th scope="col" className="px-4 py-3">Email</th>
+            <th scope="col" className="px-5 py-3 text-center">Actions</th>
           </tr>
         </thead>
 
@@ -42,7 +43,7 @@ const Orders = () => {
               <td className="px-4 py-3">{user.email}</td>
               <td className="px-4 py-3 flex items-center justify-center gap-4">
                 <BsFillTrashFill size={22} 
-                  className="text-red-300 cursor-pointer"/>
+                  className="text-red-300 cursor-pointer mr-2"/>
                 <AiFillEdit size={22} className="text-green-300 cursor-pointer"/>
               </td>
             </tr>

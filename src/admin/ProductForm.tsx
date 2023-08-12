@@ -2,6 +2,7 @@ import React, { useState, ChangeEvent } from 'react';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { post_product } from '../api/products';
 import Loader from '../components/Loader';
+import toast from 'react-hot-toast';
 
 interface Props {
 close: () => void
@@ -25,9 +26,10 @@ const AddProduct = ({ close }: Props) => {
       mutationFn: post_product,
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["products"] });
+        toast.success("Product created successfully")
       },
-      onError: (error) => {
-        console.error(error);
+      onError: () => {
+        toast.error("Error!");
       },
     });
 
@@ -91,7 +93,7 @@ const handleDragLeave = (event: React.DragEvent<HTMLLabelElement>) => {
 
 const removeImage = () => {
     setImage(null)
-        setIsHovered(false)
+    setIsHovered(false)
 }
 
 if(addProdMutation.isLoading) return (<Loader/>)
@@ -180,7 +182,7 @@ if(addProdMutation.isLoading) return (<Loader/>)
         <path
         stroke-linecap="round"
         stroke-linejoin="round"
-        stroke-width="2"
+        strokeWidth="2"
         d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
         ></path>
         </svg>

@@ -16,6 +16,7 @@ const Products = () => {
   const { ref, inView } = useInView()
   const [show, setShow] = useState(false)
   const [edit, setEdit] = useState(false)
+  const [editProduct, setEditProduct] = useState(0)
   const queryClient = useQueryClient()
 
   const { data, isLoading, error, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery(
@@ -32,8 +33,8 @@ const Products = () => {
       queryClient.invalidateQueries(["products"])
       toast.success("Product deleted successfully")
     }, 
-    onError: (error) => {
-      console.error(error);
+    onError: () => {
+      toast.error("Failed to delete!");
     },
   })
 
@@ -41,10 +42,11 @@ const Products = () => {
     if (inView) {
       fetchNextPage()
     }
-  }, [inView])
+  }, [inView, fetchNextPage])
 
   if (isLoading) return <Loader/>
   if(error instanceof Error) return <>{toast.error(error.message)}</>
+  //if(data.pages?.data.length === 0 ) return <p className="text-xl text-slate-800 dark:text-slate-200">No results</p>
 
   return (
     <>
@@ -73,7 +75,7 @@ const Products = () => {
                   onClick={() => setShow(true)}
                   type="button" className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
                   <svg className="h-3.5 w-3.5 mr-2" fill="currentColor"  xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <path clip-rule="evenodd" fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
+                    <path clipRule="evenodd" fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
                   </svg>
                   Add new product
                 </button>
@@ -99,10 +101,12 @@ const Products = () => {
                     <React.Fragment key={i}>
 
                       {page.data.map((product: Product)=> (
+                        
 
                         <>
 
                           <tr key={product.id} className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            {product.id}
                             <th scope="row" className="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                               <img src={`http://127.0.0.1:8000${product.image}`} alt={product.name} className="w-auto h-8 mr-3"/>
 
@@ -155,20 +159,21 @@ const Products = () => {
                                 <BsFillTrashFill 
                                   onClick={() => {
                                     if (product.id) {
-                                      deleteProductMutation.mutate(product.name);
+                                      deleteProductMutation.mutate(product.id);
                                     }
                                   }}
                                   className="text-red-500 w-6 h-6 cursor-pointer hover:text-white"/>
                                 <AiFillEdit 
-                                    onClick={() => setEdit(true)}
+                                    onClick={() => {
+                                      setEdit(true)
+                                      setEditProduct(product.id)}}
                                   className="text-blue-500 w-6 h-6 cursor-pointer hover:text-white"/>
                               </div>
                             </td>
                           </tr>
         
               {edit && (
-        <EditProduct param={product.name} close={() => setEdit(false)} />
-
+                <EditProduct param={editProduct} close={() => setEdit(false)} />
               )}
 
                         </>
@@ -180,11 +185,11 @@ const Products = () => {
                   ))}
 
                   {!isLoading && data?.pages.length === 0 && <p className="text-xl text-slate-800 dark:text-slate-200">No more results</p>}
-                  {!isLoading && data?.pages?.length !== undefined && data.pages.length > 0 && hasNextPage && (
+                  {/*!isLoading && data?.pages?.length !== undefined && data.pages.length > 0 && hasNextPage && (
                     <div ref={ref}>
                       {isLoading || isFetchingNextPage ? <Loader /> : null}
                     </div>
-                  )}
+                  )*/}
                 </tbody>
               </table>
             </div>
